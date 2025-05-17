@@ -6,7 +6,6 @@ from sklearn.preprocessing import LabelEncoder
 import traceback
 import numpy as np
 
-
 app = Flask(__name__)
 CORS(app)
 
@@ -17,13 +16,19 @@ try:
     # Load the model
     model = joblib.load('VotingEnsemble_model.pkl')
 
-    # Manually initialize and fit LabelEncoders with known values
+    # Initialize all required encoders
     position_encoder = LabelEncoder()
     tier_encoder = LabelEncoder()
+    play_styles_encoder = LabelEncoder()
+    att_position_encoder = LabelEncoder()
+    team_contract_encoder = LabelEncoder()
 
-    # These must match the encoding used during model training
+    # Set the known classes for each encoder (must match training data)
     position_encoder.classes_ = np.array(["Goalkeeper", "Defender", "Midfielder", "Forward"])
     tier_encoder.classes_ = np.array(["Top", "Mid", "Low"])
+    play_styles_encoder.classes_ = np.array(["Technical", "Physical", "Balanced", "Unknown"])
+    att_position_encoder.classes_ = np.array(["Center", "Wide", "Free Role", "Unknown"])
+    team_contract_encoder.classes_ = np.array(["1 year", "2 years", "3 years", "4+ years", "Unknown"])
 
     print("Model and encoders loaded successfully!")
 
@@ -53,47 +58,86 @@ def predict_market_value():
         data = request.get_json()
         print("Received data:", data)
 
-        # Validate required fields
-        required_fields = ['age', 'position', 'overall_rating', 'club_tier']
-        missing = [field for field in required_fields if field not in data or data[field] in [None, '']]
-        if missing:
+        # Define all required fields with their expected types
+        required_fields = {
+            'age': int,
+            'position': str,
+            'overall_rating': float,
+            'club_tier': str,
+            'potential': float,
+            'reactions': float,
+            'composure': float,
+            'total_defending': float,
+            'play_styles': str,
+            'years_since_joined': int,
+            'best_overall': float,
+            'wage': float,
+            'team_contract': str,
+            'growth': float,
+            'att_position': str
+        }
+
+        # Validate all fields exist and have proper types
+        errors = []
+        processed_data = {}
+        
+        for field, field_type in required_fields.items():
+            if field not in data or data[field] is None:
+                errors.append(f"Missing required field: {field}")
+                continue
+            
+            try:
+                # Convert to correct type
+                processed_data[field] = field_type(data[field])
+            except (ValueError, TypeError):
+                errors.append(f"Invalid type for {field}, expected {field_type.__name__}")
+
+        if errors:
             return jsonify({
                 'status': 'error',
-                'missing_fields': missing,
-                'message': 'All required fields must be provided'
+                'errors': errors,
+                'message': 'Invalid input data'
             }), 400
 
-        # Create DataFrame
-        df = pd.DataFrame([{
-            'age': int(data['age']),
-            'position': data['position'],
-            'overall_rating': float(data['overall_rating']),
-            'club_tier': data['club_tier']
-        }])
+        # Create DataFrame with all required features
+        df = pd.DataFrame([processed_data])
 
         # Encode categorical variables
         try:
             df['position'] = position_encoder.transform(df['position'])
             df['club_tier'] = tier_encoder.transform(df['club_tier'])
+            df['play_styles'] = play_styles_encoder.transform(df['play_styles'])
+            df['team_contract'] = team_contract_encoder.transform(df['team_contract'])
+            df['att_position'] = att_position_encoder.transform(df['att_position'])
         except ValueError as enc_err:
             return jsonify({
                 'status': 'error',
-                'message': f'Invalid value in categorical fields: {enc_err}'
+                'message': 'Invalid categorical value',
+                'details': str(enc_err),
+                'valid_positions': position_encoder.classes_.tolist(),
+                'valid_tiers': tier_encoder.classes_.tolist(),
+                'valid_play_styles': play_styles_encoder.classes_.tolist(),
+                'valid_team_contracts': team_contract_encoder.classes_.tolist(),
+                'valid_att_positions': att_position_encoder.classes_.tolist()
             }), 400
 
-        # Ensure correct feature order
-        features = ['age', 'position', 'overall_rating', 'club_tier']
-        if not all(f in df.columns for f in features):
-            raise ValueError("Missing features for prediction")
+        # Ensure correct feature order (must match training data exactly)
+        features = [
+            'age', 'position', 'overall_rating', 'club_tier',
+            'potential', 'reactions', 'composure', 'total_defending',
+            'play_styles', 'years_since_joined', 'best_overall',
+            'wage', 'team_contract', 'growth', 'att_position'
+        ]
 
         # Predict
         prediction = model.predict(df[features])
-        market_value = max(100000, round(float(prediction[0])))
+        market_value = max(100000, round(float(prediction[0])))  # Minimum €100,000
 
         return jsonify({
             'status': 'success',
             'predicted_market_value': market_value,
-            'currency': 'EUR'
+            'currency': 'EUR',
+            'input_features': processed_data
         })
 
     except Exception as e:

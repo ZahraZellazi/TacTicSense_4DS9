@@ -2,36 +2,57 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import "./MarketValue.css";
 
+interface FormData {
+  age: string;
+  position: string;
+  overall_rating: string;
+  club_tier: string;
+  potential: string;
+  reactions: string;
+  composure: string;
+  total_defending: string;
+  play_styles: string;
+  years_since_joined: string;
+  best_overall: string;
+  wage: string;
+  team_contract: string;
+  growth: string;
+  att_position: string;
+}
+
+interface PredictionResult {
+  predicted_market_value: number;
+  currency: string;
+}
+
 export function MarketValue() {
-  const [formData, setFormData] = useState({
-    name: "",
-    teamName: "",
-    position: "",
-    age: "",
-    releaseClause: "",
-    potential: "",
-    overallRating: "",
-    bestOverall: "",
-    wage: "",
-    yearsSinceJoined: "",
-    teamContract: "",
-    growth: "",
-    attPosition: "",
-    reactions: "",
-    totalDefending: "",
-    playStyles: "",
-    composure: "",
-    weight: "",
+  const [formData, setFormData] = useState<FormData>({
+    age: '',
+    position: '',
+    overall_rating: '',
+    club_tier: 'Mid',
+    potential: '',
+    reactions: '',
+    composure: '',
+    total_defending: '',
+    play_styles: 'Technical',
+    years_since_joined: '',
+    best_overall: '',
+    wage: '',
+    team_contract: '3 years',
+    growth: '',
+    att_position: 'Center'
   });
 
-  const [prediction, setPrediction] = useState<{
-    predicted_market_value: number;
-    currency: string;
-  } | null>(null);
+  const [prediction, setPrediction] = useState<PredictionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const positions = ["Goalkeeper", "Defender", "Midfielder", "Forward"];
+  const clubTiers = ["Top", "Mid", "Low"];
+  const playStyles = ["Technical", "Physical", "Balanced", "Unknown"];
+  const attPositions = ["Center", "Wide", "Free Role", "Unknown"];
+  const teamContracts = ["1 year", "2 years", "3 years", "4+ years", "Unknown"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -48,27 +69,34 @@ export function MarketValue() {
     setPrediction(null);
 
     try {
-      if (!formData.overallRating || !formData.position || !formData.age || !formData.teamName) {
-        throw new Error("Please fill all required fields");
+      // Validate required fields
+      if (!formData.age || !formData.position || !formData.overall_rating) {
+        throw new Error("Please fill all required fields (Age, Position, Overall Rating)");
       }
 
-      const clubTier = formData.teamName.toLowerCase().includes("real") ||
-        formData.teamName.toLowerCase().includes("barcelona") ||
-        formData.teamName.toLowerCase().includes("man city") ||
-        formData.teamName.toLowerCase().includes("bayern") ? "Top" : "Mid";
-
-      const requestData = {
-        age: parseInt(formData.age),
+      // Prepare payload with proper types
+      const payload = {
+        age: Number(formData.age),
         position: formData.position,
-        overall_rating: parseInt(formData.overallRating),
-        club_tier: clubTier,
-        ...formData // you may want to clean/convert numeric fields depending on your backend expectations
+        overall_rating: Number(formData.overall_rating),
+        club_tier: formData.club_tier,
+        potential: formData.potential ? Number(formData.potential) : 0,
+        reactions: formData.reactions ? Number(formData.reactions) : 0,
+        composure: formData.composure ? Number(formData.composure) : 0,
+        total_defending: formData.total_defending ? Number(formData.total_defending) : 0,
+        play_styles: formData.play_styles,
+        years_since_joined: formData.years_since_joined ? Number(formData.years_since_joined) : 0,
+        best_overall: formData.best_overall ? Number(formData.best_overall) : 0,
+        wage: formData.wage ? Number(formData.wage) : 0,
+        team_contract: formData.team_contract,
+        growth: formData.growth ? Number(formData.growth) : 0,
+        att_position: formData.att_position
       };
 
       const response = await fetch("http://localhost:5002/predict_market_value", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -86,7 +114,7 @@ export function MarketValue() {
     }
   };
 
-  const renderInput = (label: string, name: keyof typeof formData, type = "text", required = false) => (
+  const renderInput = (label: string, name: keyof FormData, type = "text", required = false) => (
     <motion.div className="form-group" whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 300 }}>
       <label htmlFor={name}>{label}{required ? " *" : ""}</label>
       <input
@@ -96,95 +124,155 @@ export function MarketValue() {
         value={formData[name]}
         onChange={handleChange}
         required={required}
+        min={type === "number" ? "0" : undefined}
+        step={type === "number" ? "1" : undefined}
       />
     </motion.div>
   );
 
+  const renderSelect = (label: string, name: keyof FormData, options: string[], required = false) => (
+    <motion.div className="form-group" whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 300 }}>
+      <label htmlFor={name}>{label}{required ? " *" : ""}</label>
+      <select
+        id={name}
+        name={name}
+        value={formData[name]}
+        onChange={handleChange}
+        required={required}
+      >
+        {options.map((option, index) => (
+          <option key={index} value={option}>{option}</option>
+        ))}
+      </select>
+    </motion.div>
+  );
+
   return (
-    <motion.div className="player-attributes-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+    <motion.div
+      className="market-value-page"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="container">
-        <motion.div className="header-section" initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-          <motion.h1 className="section-title" whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+        <motion.div
+          className="header-section"
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h1 className="section-title" whileHover={{ scale: 1.02 }}>
             Market <span>Value</span> Prediction
           </motion.h1>
-          <motion.p className="section-subtitle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.2 }}>
-            Analyze player attributes to predict market value
+          <motion.p className="section-subtitle">
+            Predict a player's market value using key attributes
           </motion.p>
         </motion.div>
 
-        <motion.form onSubmit={handleSubmit} className="player-form" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}>
+        <motion.form
+          onSubmit={handleSubmit}
+          className="prediction-form"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
           <div className="form-grid">
-            {renderInput("Player Name", "name")}
-            {renderInput("Team Name", "teamName", "text", true)}
-
-            <motion.div className="form-group" whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 300 }}>
-              <label htmlFor="position">Position *</label>
-              <select id="position" name="position" value={formData.position} onChange={handleChange} required>
-                <option value="">Select position</option>
-                {positions.map((pos, i) => (
-                  <option key={i} value={pos}>{pos}</option>
-                ))}
-              </select>
-            </motion.div>
-
+            {/* Row 1 */}
             {renderInput("Age", "age", "number", true)}
-            {renderInput("Overall Rating", "overallRating", "number", true)}
-            {renderInput("Release Clause", "releaseClause")}
-            {renderInput("Potential", "potential")}
-            {renderInput("Best Overall", "bestOverall")}
-            {renderInput("Wage", "wage")}
-            {renderInput("Years Since Joined", "yearsSinceJoined")}
-            {renderInput("Team Contract", "teamContract")}
-            {renderInput("Growth", "growth")}
-            {renderInput("Attacking Position", "attPosition")}
-            {renderInput("Reactions", "reactions")}
-            {renderInput("Total Defending", "totalDefending")}
-            {renderInput("Play Styles", "playStyles")}
-            {renderInput("Composure", "composure")}
-            {renderInput("Weight", "weight")}
+            {renderSelect("Position", "position", positions, true)}
+            {renderInput("Overall Rating", "overall_rating", "number", true)}
+            
+            {/* Row 2 */}
+            {renderSelect("Club Tier", "club_tier", clubTiers)}
+            {renderInput("Potential", "potential", "number")}
+            {renderInput("Reactions", "reactions", "number")}
+            
+            {/* Row 3 */}
+            {renderInput("Composure", "composure", "number")}
+            {renderInput("Total Defending", "total_defending", "number")}
+            {renderSelect("Play Styles", "play_styles", playStyles)}
+            
+            {/* Row 4 */}
+            {renderInput("Years Since Joined", "years_since_joined", "number")}
+            {renderInput("Best Overall", "best_overall", "number")}
+            {renderInput("Wage (€)", "wage", "number")}
+            
+            {/* Row 5 */}
+            {renderSelect("Team Contract", "team_contract", teamContracts)}
+            {renderInput("Growth", "growth", "number")}
+            {renderSelect("Attacking Position", "att_position", attPositions)}
 
-            <motion.button type="submit" className="submit-btn" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} disabled={isLoading}>
-              {isLoading ? <span>Analyzing...</span> : <>
-                <span>Analyze Player</span>
-                <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </>}
+            <motion.button
+              type="submit"
+              className="submit-button"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span>Predicting...</span>
+                  <div className="spinner"></div>
+                </>
+              ) : (
+                <>
+                  <span>Predict Value</span>
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </>
+              )}
             </motion.button>
           </div>
         </motion.form>
 
         {isLoading && (
-          <motion.div className="result-section loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="loading-spinner"></div>
-            <p>Analyzing player attributes...</p>
+          <motion.div
+            className="loading-container"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="spinner"></div>
+            <p>Calculating market value...</p>
           </motion.div>
         )}
 
         {error && (
-          <motion.div className="result-section error" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <motion.div
+            className="error-message"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
             <h3>Error</h3>
             <p>{error}</p>
-            <button className="retry-btn" onClick={() => setError(null)}>Try Again</button>
+            <button onClick={() => setError(null)}>Try Again</button>
           </motion.div>
         )}
 
         {prediction && (
-          <motion.div className="result-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <h3>Analysis Results</h3>
+          <motion.div
+            className="result-section"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h3>Prediction Results</h3>
             <div className="result-card">
-              {formData.name && <div className="result-item"><span className="result-label">Player:</span><span className="result-value">{formData.name}</span></div>}
-              {formData.teamName && <div className="result-item"><span className="result-label">Team:</span><span className="result-value">{formData.teamName}</span></div>}
-              <div className="result-item"><span className="result-label">Position:</span><span className="result-value">{formData.position}</span></div>
-              <div className="result-item"><span className="result-label">Age:</span><span className="result-value">{formData.age}</span></div>
-              <div className="result-item"><span className="result-label">Rating:</span><span className="result-value">{formData.overallRating}</span></div>
               <div className="result-item highlight">
-                <span className="result-label">Estimated Market Value:</span>
-                <span className="result-value">{prediction.currency} {prediction.predicted_market_value.toLocaleString()}</span>
+                <span className="result-label">Predicted Market Value:</span>
+                <span className="result-value">
+                  {prediction.currency} {prediction.predicted_market_value.toLocaleString()}
+                </span>
               </div>
+              <button
+                className="new-prediction-btn"
+                onClick={() => {
+                  setPrediction(null);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                Analyze Another Player
+              </button>
             </div>
-            <button className="new-prediction-btn" onClick={() => {
-              setPrediction(null);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}>Analyze Another Player</button>
           </motion.div>
         )}
       </div>
