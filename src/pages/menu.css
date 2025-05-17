@@ -1,0 +1,183 @@
+/* Features Carousel Section */
+.features-carousel {
+    padding: 5rem 0;
+    background: var(--darker);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.features-carousel .section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    color: white;
+    position: relative;
+}
+
+.features-carousel .section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--primary);
+    margin: 1rem auto 0;
+}
+
+.carousel-wrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 50px;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+    gap: 2rem;
+    padding: 1rem 0;
+    overflow: hidden;
+    position: relative;
+    min-height: 400px;
+}
+
+.features-carousel .feature-card {
+    position: absolute;
+    width: calc(100% - 4rem);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2.5rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    opacity: 0.5;
+    transform: scale(0.9);
+    pointer-events: auto;
+}
+
+.features-carousel .feature-card.active {
+    position: relative;
+    opacity: 1;
+    transform: scale(1);
+    background: rgba(16, 181, 130, 0.1);
+    border-color: var(--primary);
+    z-index: 10;
+}
+
+.features-carousel .feature-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(16, 181, 130, 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.features-carousel .feature-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: var(--primary);
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.features-carousel .feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    font-weight: 600;
+}
+
+.features-carousel .feature-card p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.features-carousel .feature-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 20;
+}
+
+.features-carousel .feature-link:hover {
+    color: white;
+}
+
+.features-carousel .feature-link svg {
+    width: 16px;
+    height: 16px;
+    margin-left: 0.5rem;
+    stroke: currentColor;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 30;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.carousel-arrow:hover {
+    background: var(--primary);
+}
+
+.carousel-arrow svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.carousel-arrow.prev {
+    left: 0;
+}
+
+.carousel-arrow.next {
+    right: 0;
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+    gap: 0.75rem;
+}
+
+.carousel-indicators .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicators .indicator.active {
+    background: var(--primary);
+    transform: scale(1.2);
+}

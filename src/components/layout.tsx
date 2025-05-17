@@ -6,7 +6,9 @@ export const Layout = () => {
   return (
     <div className="wrapper">
       <Header />
-      <Outlet />
+      <main className="main-content">
+        <Outlet /> {/* Ceci affichera le contenu des pages */}
+      </main>
       <Footer />
     </div>
   );

@@ -1,0 +1,397 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #10b582;
+  --primary-dark: #0d9268;
+  --dark: #0d1a1f;
+  --darker: #091317;
+  --light: #f5f7f8;
+  --light-gray: rgba(255, 255, 255, 0.7);
+  --error: #ff4d4d;
+}
+
+/* Header Base Styles */
+.header-main {
+  position: relative;
+  z-index: 1000;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Upper Header - User Info */
+.header-upper {
+  background-color: var(--darker);
+  padding: 0.8rem 0; /* Increased from 0.5rem */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem; /* Increased from 1rem */
+}
+
+.user-nav {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem; /* Increased from 1rem */
+}
+
+.username {
+  color: var(--light-gray);
+  font-size: 1rem; /* Increased from 0.9rem */
+  font-weight: 400;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem; /* Increased from 0.5rem */
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-size: 1rem; /* Increased from 0.9rem */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0.4rem 0; /* Increased from 0.3rem */
+}
+
+.logout-icon {
+  width: 18px; /* Increased from 16px */
+  height: 18px; /* Increased from 16px */
+  fill: var(--primary);
+  transition: transform 0.3s ease;
+}
+
+.logout-btn:hover {
+  color: var(--light);
+}
+
+.logout-btn:hover .logout-icon {
+  fill: var(--light);
+  transform: translateX(2px);
+}
+
+.auth-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem; /* Increased from 0.5rem */
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 1rem; /* Increased from 0.9rem */
+  transition: all 0.3s ease;
+}
+
+.user-icon {
+  width: 18px; /* Increased from 16px */
+  height: 18px; /* Increased from 16px */
+  fill: var(--primary);
+  transition: transform 0.3s ease;
+}
+
+.auth-link:hover {
+  color: var(--light);
+}
+
+.auth-link:hover .user-icon {
+  fill: var(--light);
+  transform: scale(1.1);
+}
+
+/* Main Header - Navigation */
+.header-lower {
+  background-color: rgba(13, 26, 31, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  padding: 1.2rem 0; /* Increased from 0.5rem */
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0; /* Increased from 1rem */
+  position: relative;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 101;
+}
+
+.logo-img {
+  height: 120px; /* Increased from 100px */
+  width: 140px; /* Increased from 120px */
+  filter: drop-shadow(0 0 8px rgba(16, 181, 130, 0.4));
+}
+
+.logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px; /* Increased from 60px */
+  height: 80px; /* Increased from 60px */
+  background: radial-gradient(circle, rgba(16, 181, 130, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Menu Toggle Button */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 32px; /* Increased from 30px */
+  height: 24px; /* Increased from 22px */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px; /* Increased from 2px */
+  background-color: var(--light);
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.menu-toggle.open span:nth-child(1) {
+  transform: translateY(10.5px) rotate(45deg); /* Adjusted */
+}
+
+.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.open span:nth-child(3) {
+  transform: translateY(-10.5px) rotate(-45deg); /* Adjusted */
+}
+
+/* Navigation Menu */
+.nav-menu {
+  display: flex;
+  align-items: center;
+}
+
+.main-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.main-menu > li {
+  position: relative;
+  margin: 0 1rem; /* Increased from 0.8rem */
+}
+
+.main-menu > li > a {
+  position: relative;
+  display: block;
+  color: var(--light-gray);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.05rem; /* Increased from 0.95rem */
+  padding: 0.8rem 0; /* Increased from 0.5rem */
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.menu-link-hover {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px; /* Increased from 2px */
+  background-color: var(--primary);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.main-menu > li > a:hover .menu-link-hover,
+.main-menu > li.active > a .menu-link-hover {
+  transform: translateX(0);
+}
+
+.main-menu > li > a:hover,
+.main-menu > li.active > a {
+  color: var(--light);
+}
+
+/* Submenu */
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px; /* Increased from 200px */
+  background-color: var(--darker);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  list-style: none;
+  padding: 0.8rem 0; /* Increased from 0.5rem */
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.has-submenu:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.submenu li a {
+  display: block;
+  padding: 0.8rem 1.8rem; /* Increased from 0.6rem 1.5rem */
+  color: var(--light-gray);
+  text-decoration: none;
+  font-size: 0.95rem; /* Increased from 0.9rem */
+  transition: all 0.2s ease;
+}
+
+.submenu li a:hover {
+  color: var(--light);
+  background-color: rgba(16, 181, 130, 0.1);
+}
+
+/* Social Links */
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem; /* Increased from 1rem */
+  margin-left: 2rem; /* Increased from 1.5rem */
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; /* Increased from 32px */
+  height: 36px; /* Increased from 32px */
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.social-icon {
+  width: 18px; /* Increased from 16px */
+  height: 18px; /* Increased from 16px */
+  fill: var(--light-gray);
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background-color: var(--primary);
+}
+
+.social-link:hover .social-icon {
+  fill: var(--light);
+}
+
+/* Mobile Menu */
+@media (max-width: 992px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px; /* Increased from 280px */
+    height: 100vh;
+    background-color: var(--darker);
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2.5rem; /* Increased from 2rem */
+    transition: right 0.4s ease;
+    z-index: 100;
+  }
+
+  .nav-menu.open {
+    right: 0;
+  }
+
+  .main-menu {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .main-menu > li {
+    margin: 0.8rem 0; /* Increased from 0.5rem */
+    width: 100%;
+  }
+
+  .main-menu > li > a {
+    padding: 1rem 0; /* Increased from 0.8rem */
+    font-size: 1.1rem; /* Increased */
+  }
+
+  .submenu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .has-submenu:hover .submenu,
+  .has-submenu:focus-within .submenu {
+    max-height: 300px;
+    padding: 0.8rem 0 0.8rem 1.5rem; /* Increased */
+  }
+
+  .social-links {
+    margin: 2rem 0 0; /* Increased from 1.5rem */
+    justify-content: center;
+    width: 100%;
+    gap: 1.5rem; /* Increased */
+  }
+
+  .social-link {
+    width: 40px; /* Increased */
+    height: 40px; /* Increased */
+  }
+
+  .social-icon {
+    width: 20px; /* Increased */
+    height: 20px; /* Increased */
+  }
+}
+
+/* Animation for menu items */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
