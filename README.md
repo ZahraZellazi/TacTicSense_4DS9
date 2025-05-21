@@ -1,4 +1,4 @@
-improve this read me file more # 🚀⚽️ TacticSense – The Ultimate Football Analytics Platform 💡📊
+# 🚀⚽️ TacticSense – The Ultimate Football Analytics Platform 💡📊
 
 Welcome to **TacticSense**, an AI-powered, data-driven football analytics platform designed to revolutionize recruitment, performance analysis, and tactical decision-making in the beautiful game! 🌟
 
