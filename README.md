@@ -82,9 +82,8 @@ An end-to-end intelligent platform that empowers:
 - MongoDB for real-time data access 🗄️  
 
 **Infrastructure:**  
-- Docker for scalable deployment 🐳  
 - Prefect for workflow management & monitoring ⚙️  
-- CI/CD pipelines (GitHub Actions or Jenkins) 🤖🔁  
+- CI/CD pipelines (GitHub Actions ) 
 
 ### 6️⃣ Monitoring & Maintenance 🕵️‍♀️📈  
 **Features:**  
